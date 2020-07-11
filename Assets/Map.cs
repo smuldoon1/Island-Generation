@@ -108,17 +108,51 @@
         return removedMap;
     }
 
+    //Removes the right map from the left i.e 0.8 - 0.3 -> 0.5, 1 - 0.1 -> 0.9, 0.4 - 0.8 -> 0
+    public static Map operator +(Map left, Map right)
+    {
+        if (left.width != right.width || left.height != right.width)
+        {
+            throw new MapSizeMismatch("The width and height of both maps must match.");
+        }
+
+        Map removedMap = new Map(left.width, left.height);
+
+        for (int j = 0; j < left.height; j++)
+        {
+            for (int i = 0; i < left.width; i++)
+            {
+                removedMap.SetValue(i, j, left.value[i, j] + right.value[i, j]);
+            }
+        }
+        return removedMap;
+    }
+
     //Negates the mapping i.e 0.4 -> 0.6, 0.9 -> 0.1
     public static Map operator ! (Map value)
     {
-        for (int j = 0; j < value.height; j++)
+        Map reverseMap = value;
+        for (int j = 0; j < reverseMap.height; j++)
         {
-            for (int i = 0; i < value.width; i++)
+            for (int i = 0; i < reverseMap.width; i++)
             {
-                value.SetValue(i, j, 1 - value.value[i, j]);
+                reverseMap.SetValue(i, j, 1 - reverseMap.value[i, j]);
             }
         }
-        return value;
+        return reverseMap;
+    }
+
+    public static Map ReverseMap(Map map)
+    {
+        Map reverseMap = map;
+        for (int j = 0; j < reverseMap.height; j++)
+        {
+            for (int i = 0; i < reverseMap.width; i++)
+            {
+                reverseMap.SetValue(i, j, 1 - reverseMap.value[i, j]);
+            }
+        }
+        return reverseMap;
     }
 
     //Adds a float value to each element in the map

@@ -10,11 +10,31 @@ public class WorldGenEditor : Editor
     bool terrainOptions = false;
 
     WorldGen worldGen;
+    BiomeData data = new BiomeData();
 
+    private void OnSceneGUI()
+    {
+        Vector2 mousePos = Event.current.mousePosition;
+        mousePos.y = Camera.current.pixelHeight - mousePos.y;
+        Ray ray = Camera.current.ScreenPointToRay(mousePos);
+        RaycastHit hit;
+        data = new BiomeData();
+        Debug.Log(ray);
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            if (hit.collider.gameObject.GetComponent<SubMesh>())
+            {
+                //data = hit.collider.GetComponent<SubMesh>().GetDataOnMesh();
+            }
+        }
+    }
+
+    [System.Obsolete] // Bypasses warning about EditorGUILayout.ObjectField()
     public override void OnInspectorGUI()
     {
         worldGen = (WorldGen)target;
 
+        EditorGUILayout.LabelField("Biome data: ", data.ToString(), GUILayout.MinHeight(50f));
         worldGen.seed = EditorGUILayout.IntField("Seed", worldGen.seed);
 
         worldGen.mapWidth = EditorGUILayout.IntSlider("Map Width", worldGen.mapWidth, 1, 2048);
@@ -27,27 +47,30 @@ public class WorldGenEditor : Editor
             worldGen.lacunarity = EditorGUILayout.Slider("Lacunarity", worldGen.lacunarity, 0, 16);
             worldGen.offset = EditorGUILayout.Vector2Field("Offset", worldGen.offset);
             worldGen.islandMask = (Texture2D)EditorGUILayout.ObjectField("Island Mask", worldGen.islandMask, typeof(Texture2D));
+            worldGen.tempMask = (Texture2D)EditorGUILayout.ObjectField("Temperature Mask", worldGen.tempMask, typeof(Texture2D));
+            worldGen.biomeGuide = (Texture2D)EditorGUILayout.ObjectField("Biome Guide", worldGen.biomeGuide, typeof(Texture2D));
+            worldGen.material = (Material)EditorGUILayout.ObjectField("Terrain Material", worldGen.material, typeof(Material));
         }
         worldGen.drawMode = (DrawMode)EditorGUILayout.EnumPopup("Draw Mode", worldGen.drawMode);
 
         worldGen.updateOnValidate = EditorGUILayout.Toggle("Auto Generate", worldGen.updateOnValidate);
+        worldGen.randomiseOnStart = EditorGUILayout.Toggle("Randomise on Start", worldGen.randomiseOnStart);
 
         if (GUI.changed)
         {
-            if (worldGen.updateOnValidate)
+            if (worldGen.updateOnValidate && Application.isPlaying)
             {
                 worldGen.GenerateMap();
             }
         }
 
-        if (GUILayout.Button("Generate World"))
-        {
-            worldGen.GenerateMap();
-        }
+        if (!Application.isPlaying) GUI.enabled = false;
+        if (GUILayout.Button("Generate World")) worldGen.GenerateMap();
+        if (!Application.isPlaying) GUI.enabled = true;
 
-        if (GUILayout.Button("Randomize Seed"))
+        if (GUILayout.Button("Randomise Seed"))
         {
-            worldGen.seed = Random.Range(int.MinValue, int.MaxValue);
+            worldGen.RandomiseSeed();
             if (worldGen.updateOnValidate)
             {
                 worldGen.GenerateMap();
