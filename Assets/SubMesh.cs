@@ -31,8 +31,7 @@ public class SubMesh : MonoBehaviour
 
     public BiomeData GetDataOnMesh(float xPosition, float zPosition)
     {
-        //biomeData[xPositio]
-        return null;
+        return biomeData[x * MeshGenerator.maxMeshSize + Mathf.FloorToInt(xPosition % MeshGenerator.maxMeshSize), z * MeshGenerator.maxMeshSize + Mathf.FloorToInt(zPosition % MeshGenerator.maxMeshSize)];
     }
 
     public BiomeData GetDataOnMesh(int x, int z)

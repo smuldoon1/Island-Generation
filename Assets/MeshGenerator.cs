@@ -11,7 +11,7 @@ public class MeshGenerator : MonoBehaviour
 
     // A mesh with 256*256 vertices (65536) cannot be generated as there is a hard limit of 65534 in Unity
     [Range(1, 255)]
-    const int maxMeshSize = 204;
+    public static int maxMeshSize = 204;
 
     SubMesh[,] meshes;
     public Material subMeshMaterial;
@@ -33,6 +33,7 @@ public class MeshGenerator : MonoBehaviour
                 meshes[i, j].transform.parent = gameObject.transform;
                 meshes[i, j].SetMaterial(subMeshMaterial);
                 meshes[i, j].SetBiomeDataSize(GetSubMeshSize(i, totalXSize), GetSubMeshSize(j, totalZSize));
+                Debug.Log(GetSubMeshSize(i, totalXSize) + ", " + GetSubMeshSize(j, totalZSize));
                 meshes[i, j].position = new Vector2Int(i, j);
             }
         }
@@ -75,12 +76,12 @@ public class MeshGenerator : MonoBehaviour
                         float height = worldGen.GetVertexHeight(z + m * xSize, x + n * zSize);
                         float actualHeight = GetTerrainHeight(height);
                         vertices[i] = new Vector3(x, actualHeight, z);
-                        /*
+
+                        Debug.Log(meshes[n, m].biomeData + " | " + n + ", " + m + " ~ " + x + ", " + z);
                         meshes[n, m].biomeData[x, z].normalizedHeight = height;
                         meshes[n, m].biomeData[x, z].actualHeight = actualHeight;
                         meshes[n, m].biomeData[x, z].temperature = worldGen.GetTerrainTemperature(x, z);
-                        meshes[n, m].biomeData[x, z].colour = worldGen.GetTerrainColour(x, z);
-                        */
+                        meshes[n, m].biomeData[x, z].colour = worldGen.GetTerrainColour(x, z);         
                     }
                 }
 

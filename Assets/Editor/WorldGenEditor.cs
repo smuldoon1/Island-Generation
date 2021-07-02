@@ -24,7 +24,7 @@ public class WorldGenEditor : Editor
         {
             if (hit.collider.gameObject.GetComponent<SubMesh>())
             {
-                //data = hit.collider.GetComponent<SubMesh>().GetDataOnMesh();
+                data = hit.collider.GetComponent<SubMesh>().GetDataOnMesh(hit.point.x, hit.point.z);
             }
         }
     }
